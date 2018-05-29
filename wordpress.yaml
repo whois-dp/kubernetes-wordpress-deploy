@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-site
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: wordpress
+  type: NodePort
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: wordpress-pv-volume
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/tmp/data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: wordpress-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: wordpress-rc
+spec:
+  replicas: 1
+  selector: 
+    app: wordpress
+  template:
+    metadata:
+      name: wordpress-rc
+      labels:
+        app: wordpress
+    spec:
+      volumes:
+      - name: wordpress-pv-storage
+        persistentVolumeClaim:
+          claimName: wordpress-pv-claim
+      containers:
+      - name: wordpress
+        image: wordpress:latest
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mariadb
+        - name: WORDPRESS_DB_USER
+          value: wp-kube-usr
+        - name: WORDPRESS_DB_PASSWORD
+          value: q1w2e3r4t5
+        - name: WORDPRESS_DB_NAME
+          value: wp-kube-db
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: "/var/www/html"
+          name: wordpress-pv-storage

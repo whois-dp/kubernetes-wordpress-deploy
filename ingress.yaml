@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: wp-ingress
+spec:
+  tls:
+  - hosts:
+    - wordpress.local
+  rules:
+  - host: wordpress.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: varnish-svc
+          servicePort: 80
