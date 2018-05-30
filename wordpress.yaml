@@ -39,8 +39,8 @@ kind: ReplicationController
 metadata:
   name: wordpress-rc
 spec:
-  replicas: 4
-  selector: 
+  replicas: 1
+  selector:
     app: wordpress
   template:
     metadata:
