@@ -1,5 +1,5 @@
-include ../kubernetes/etc/help.mk
-include ../kubernetes/etc/cli.mk
+#include ../kubernetes/etc/help.mk
+#include ../kubernetes/etc/cli.mk
 
 .PHONY: deploy
 deploy: ##@setup deploy to nodes
